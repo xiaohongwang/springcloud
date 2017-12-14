@@ -1,0 +1,117 @@
+SpringCloud：注册中心Eureka
+
+1、Eureka管理各种服务功能包括服务的注册、发现、熔断、负载、降级等。
+    项目A请求项目B，直接请求项目B.
+    有了服务中心后，任何一个服务都不能直接调用其他服务，都需要通过服务中心来调用
+
+    通过服务中心来获取服务你不需要关注你调用的项目IP地址，由几台服务器组成，每次直接去服务中心获取可以使用的服务去调用既可。
+2、Eureka由两个组件组成：Eureka服务器和Eureka客户端
+    Eureka服务器用作服务注册服务器。
+    Eureka客户端是一个java客户端，用来简化与服务器的交互、作为轮询负载均衡器，并提供服务的故障切换支持。
+3、Eureka基本架构
+    Eureka Server
+        提供服务注册和发现
+    Service Provider
+        服务提供方
+        向注册中心注册自己提供的服务，从而使服务消费方能够找到
+    Service Consumer
+        服务消费方
+        从Eureka获取注册服务列表，注册中心返回服务提供者地址给消费者
+        服务消费者从提供者地址中调用消费者
+
+4、搭建eureka服务器(服务端配置)
+    pom配置:
+        <!--增加eureka-server的依赖-->
+            <dependency>
+              <groupId>org.springframework.cloud</groupId>
+              <artifactId>spring-cloud-starter-eureka-server</artifactId>
+            </dependency>
+        <!--依赖管理，用于管理spring-cloud的依赖-->
+          <dependencyManagement>
+            <dependencies>
+              <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Camden.SR6</version>
+                <type>pom</type>
+                <scope>import</scope>
+              </dependency>
+            </dependencies>
+          </dependencyManagement>
+    配置文件：
+        在默认设置下，该服务注册中心也会将自己作为客户端来尝试注册它自己，
+        所以我们需要禁用它的客户端注册行为
+            eureka:
+              instance:
+                 hostname: 设置主机名
+              client:
+                register-with-eureka: false   表示是否将自己注册到Eureka Server，默认为true。
+                fetch-registry: false  表示是否从Eureka Server获取注册信息
+                serviceUrl:
+                      defaultZone: http://localhost:8001/eureka
+                      设置与Eureka Server交互的地址，查询服务和注册服务都需要依赖这个地址。
+                      默认是http://{eureka.instance.hostname}:{server.port}/eureka/  多个地址可使用 , 分隔。
+                      /eureka/   为固定值
+              server:
+                  eviction-interval-timer-in-ms: 5000
+                  enable-self-preservation: false  #关闭自我保护
+5、集群配置
+   （1） Eureka服务端可通过相互注册的方式实现高可用的部署
+        eureka:
+          client:
+            register-with-eureka: false
+            fetch-registry: false
+            serviceUrl:
+              defaultZone: http://server2:8001/eureka/,http://server3:8005/eureka/
+
+              server1  server2  server3 三个服务注册中心，Eureka集群
+
+    （2）同时Eureka客户端要设置serviceUrl访问集群
+        eureka:
+          client:
+            serviceUrl:
+              defaultZone: http://server1:8000/eureka/,http://server2:8001/eureka/,http://server3:8005/eureka/
+6、Eureka服务 增加权限认证
+    security:
+      basic:
+        enabled: true  #开启认证
+      user:
+        name: xiaoxiao
+        password: xiaoxiao
+
+      相应的serviceUrl地址添加用户名密码信息：http://xiaoxiao:xiaoxiao@server1:8000/eureka/
+
+      pom依赖：
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+7、Zookeeper的对比
+
+1、分布式系统的CAP理论：
+
+一致性（C）：所有的节点上的数据时刻保持同步。
+
+可用性（A）：每个请求都能接受到一个响应，无论响应成功或失败。
+
+分区容错性（P）：系统应该能持续提供服务，即使系统内部有消息丢失（分区）。
+
+由于分区容错性在是分布式系统中必须要保证的，因此我们只能在A和C之间进行权衡。
+
+在此Zookeeper保证的是CP, 而Eureka则是AP。
+
+2、Zookeeper保证CP
+
+ZooKeeper是个 CP的，即任何时刻对ZooKeeper的访问请求能得到一致的数据结果，同时系统对网络分割具备容错性、但是它不能保证每次服务请求的可用性(注：也就是在极端环境下，ZooKeeper可能会丢弃一些请求，消费者程序需要重新请求才能获得结果)。
+
+例如：当master节点因为网络故障与其他节点失去联系时，剩余节点会重新进行leader选举。问题在于，选举leader的时间太长，30 ~ 120s, 且选举期间整个zk集群都是不可用的，这就导致在选举期间注册服务瘫痪。
+
+3、Eureka保证AP
+
+Eureka看明白了这一点，因此在设计时就优先保证可用性。我们可以容忍注册中心返回的是几分钟以前的注册信息，但不能接受服务直接down掉不可用。也就是说，服务注册功能对可用性的要求要高于一致性。
+
+如果Eureka服务节点在短时间里丢失了大量的心跳连接(注：可能发生了网络故障)，那么这个 Eureka节点会进入“自我保护模式”，同时保留那些“心跳死亡”的服务注册信息不过期。此时，这个Eureka节点对于新的服务还能提供注册服务，对于“死亡”的仍然保留，以防还有客户端向其发起请求。当网络故障恢复后，这个Eureka节点会退出“自我保护模式”。Eureka的哲学是，同时保留“好数据”与“坏数据”总比丢掉任何数据要更好。
+
+4、总结
+
+Eureka作为单纯的服务注册中心来说要比zookeeper更加“专业”，因为注册服务更重要的是可用性，我们可以接受短期内达不到一致性的状况。

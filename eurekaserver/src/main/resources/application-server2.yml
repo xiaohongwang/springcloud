@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: eureka
+server:
+  port: 8001
+eureka:
+  instance:
+    hostname: server2
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    serviceUrl:
+      defaultZone: http://xiaoxiao:xiaoxiao@server1:8000/eureka/,http://xiaoxiao2:xiaoxiao2@server3:8005/eureka/
+  server:
+    eviction-interval-timer-in-ms: 5000
+    enable-self-preservation: false  #关闭自我保护
+security:
+  basic:
+    enabled: true  #开启认证
+  user:
+    name: xiaoxiao1
+    password: xiaoxiao1
+

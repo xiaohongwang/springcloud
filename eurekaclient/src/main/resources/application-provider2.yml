@@ -1,0 +1,14 @@
+server:
+  port: 8006
+spring:
+  application:
+    name: eureka-provider2
+eureka:
+  instance:
+    hostname: server2
+  client:
+    serviceUrl:
+      defaultZone: http://xiaoxiao:xiaoxiao@server1:8000/eureka/,http://xiaoxiao1:xiaoxiao1@server2:8001/eureka/,http://xiaoxiao2:xiaoxiao2@server3:8005/eureka/
+words: 你，我，他
+
+

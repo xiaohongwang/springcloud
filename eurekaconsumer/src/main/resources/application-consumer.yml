@@ -1,0 +1,10 @@
+server:
+  port: 8004
+spring:
+  application:
+    name: eureka-consumer
+eureka:
+  client:
+      serviceUrl:
+        defaultZone: http://server1:8000/eureka/,http://server2:8001/eureka/,http://server3:8005/eureka/
+      register-with-eureka: false
