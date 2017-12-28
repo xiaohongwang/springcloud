@@ -1,5 +1,6 @@
 package com.springboot;
 
+import com.springboot.model.Users;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -11,12 +12,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 
 @SpringBootApplication
-@RestController
+@Controller
 @MapperScan(basePackages = "com.springboot.mapper")
 public class ShiroApplication {
 
@@ -28,7 +29,7 @@ public class ShiroApplication {
 
     @RequestMapping("/hi")
     public String hi(){
-        return "Hello Shiro!";
+        return "main";
     }
 
     @Value("${name}")
@@ -48,13 +49,27 @@ public class ShiroApplication {
       try{
           //身份认证
           subject.login(token);
+
+          //需要将用户信息存入到session中
+          Users users = (Users) subject.getPrincipal();
+          subject.getSession().setAttribute("userSession", users);
           log.info("用户身份认证通过");
       } catch (AuthenticationException e) {
           //身份认证失败
           log.error("用户身份认证失败");
       }
-
+        return  "forward:/main";
+    }
+    @RequestMapping("/loginout")
+    public String loginout(){
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();
         return "true";
     }
 
+    @RequestMapping("/main")
+    public String main(){
+        log.info("进行处理，调转到主页面");
+        return "main";
+    }
 }

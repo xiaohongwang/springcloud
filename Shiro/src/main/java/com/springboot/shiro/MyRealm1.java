@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
-public class MyRealm extends AuthorizingRealm implements Comparable{
 
+public class MyRealm1 extends AuthorizingRealm implements Comparable{
     private static  final Logger log = LoggerFactory.getLogger(MyRealm1.class);
 
     @Resource
@@ -19,7 +19,7 @@ public class MyRealm extends AuthorizingRealm implements Comparable{
 
     @Override
     public String getName() {
-        return "MyRealm";
+        return "MyRealm1";
     }
 
     @Override
@@ -32,11 +32,13 @@ public class MyRealm extends AuthorizingRealm implements Comparable{
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         log.info("调用名称为" + getName() + "的realm----------开始");
+
         //获取token中的用户名(身份)
         String userName = (String)authenticationToken.getPrincipal();
 
         //根据身份获取证明(从数据库中)
         Users users = userService.findUserById(1L);
+
         log.info("调用名称为" + getName() + "的realm----------结束");
         return new SimpleAuthenticationInfo(users, users.getPassword(), this.getName());
     }
