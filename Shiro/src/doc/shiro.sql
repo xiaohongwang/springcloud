@@ -27,4 +27,4 @@ create table roles_permissions(
 ) charset=utf8 ENGINE=InnoDB;
 create unique index idx_roles_permissions on roles_permissions(role_name, permission);
 
-insert into users(username,password)values('zhang','123');
+insert into users(username,password)values('xiaoxiao','b0980fc5c1ff87d06d1c8e0961af2739');
