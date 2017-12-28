@@ -38,15 +38,6 @@ public class ShiroConfig {
         return realm;
     }
 
-    @Bean("shiroRealm1")
-    //配置权限登录器
-    public Realm getShiroRealm1(){
-        AuthorizingRealm realm =  new MyRealm1();
-        //自定义比较器
-        realm.setCredentialsMatcher(new MyCredential());
-        return realm;
-    }
-
     @Bean(name = "shiroEhcacheManager")
     /*
         缓存管理，用户登陆成功后，把用户信息和权限信息缓存起来，然后每次用户请求时，
@@ -71,10 +62,7 @@ public class ShiroConfig {
         DefaultWebSecurityManager dwsm = new DefaultWebSecurityManager();
 
         //配置权限登录器
-        Collection<Realm> realms = new TreeSet<>();
-        realms.add(getShiroRealm());
-        realms.add(getShiroRealm1());
-        dwsm.setRealms(realms);
+        dwsm.setRealm(getShiroRealm());
         dwsm.setCacheManager(getEhCacheManager());
         return dwsm;
     }
