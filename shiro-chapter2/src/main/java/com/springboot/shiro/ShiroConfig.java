@@ -40,8 +40,8 @@ public class ShiroConfig {
     //配置权限登录器
     public Realm getShiroRealm1(){
         AuthorizingRealm realm =  new MyRealm1();
-        //自定义比较器   --  realm传入的token是经过前一个realm处理后的token
-       // realm.setCredentialsMatcher(new MyCredential());
+        //自定义比较器   --  realm传入的认证信息是经过前一个realm处理后的信息
+        // realm.setCredentialsMatcher(new MyCredential());
         return realm;
     }
 
@@ -78,15 +78,17 @@ public class ShiroConfig {
 //        AllSuccessfulStrategy 所有Realm验证成功才算成功，且返回所有Realm身份验证成功的认证信息，如果有一个失败就失败了。
         //配置权限登录器
        // dwsm.setRealm(getShiroRealm());
+        dwsm.setAuthenticator(authenticator);
+        dwsm.setCacheManager(getEhCacheManager());
+
 
         Collection<Realm> realms =
                 new ArrayList<>();
 
         realms.add(getShiroRealm());
-        realms.add(getShiroRealm1()); //realm调用顺序 realms 指定的顺序   ==》 shiroRealm  shiroRealm1
-        authenticator.setRealms(realms);
-        dwsm.setAuthenticator(authenticator);
-        dwsm.setCacheManager(getEhCacheManager());
+        //realm调用顺序 realms 指定的顺序   ==》 shiroRealm  shiroRealm1
+        realms.add(getShiroRealm1());
+        dwsm.setRealms(realms);
         return dwsm;
     }
 
