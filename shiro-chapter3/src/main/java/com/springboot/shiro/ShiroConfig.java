@@ -79,7 +79,7 @@ public class ShiroConfig {
         DefaultWebSecurityManager dwsm = new DefaultWebSecurityManager();
 
         MyRealmAuthenticator authenticator =
-                new MyRealmAuthenticator();
+                     new MyRealmAuthenticator();
         //authenticator.setAuthenticationStrategy(new AllSuccessfulStrategy());
         //authenticator.setAuthenticationStrategy(new FirstSuccessfulStrategy());
 
@@ -89,15 +89,18 @@ public class ShiroConfig {
         //配置权限登录器
        // dwsm.setRealm(getShiroRealm());
 
+        dwsm.setAuthenticator(authenticator);
+        dwsm.setCacheManager(getEhCacheManager());
+
         Collection<Realm> realms =
                 new ArrayList<>();
 
         realms.add(getShiroRealm());
-        realms.add(getShiroRealm1()); //realm调用顺序 realms 指定的顺序   ==》 shiroRealm  shiroRealm1
+        //realm调用顺序 realms 指定的顺序   ==》 shiroRealm  shiroRealm1
+        realms.add(getShiroRealm1());
         realms.add(getShiroAdmRealm());
-        authenticator.setRealms(realms);
-        dwsm.setAuthenticator(authenticator);
-        dwsm.setCacheManager(getEhCacheManager());
+
+        dwsm.setRealms(realms);
         return dwsm;
     }
 
