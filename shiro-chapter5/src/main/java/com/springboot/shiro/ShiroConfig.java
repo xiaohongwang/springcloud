@@ -69,10 +69,10 @@ public class ShiroConfig {
 
         ModularRealmAuthorizer authorizer =
                     new ModularRealmAuthorizer();
-
-        Collection<Realm> realms = new ArrayList<>();
-        realms.add(getShiroRealm());
-        authorizer.setRealms(realms);
+//
+//        Collection<Realm> realms = new ArrayList<>();
+//        realms.add(getShiroRealm());
+//        authorizer.setRealms(realms);
 
         authorizer.setRolePermissionResolver(new MyRolePermissionResolver());
         authorizer.setPermissionResolver(new WildcardPermissionResolver());
