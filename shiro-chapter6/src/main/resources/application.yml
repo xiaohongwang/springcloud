@@ -1,0 +1,13 @@
+server:
+  port: 8000
+spring:
+  application:
+    name: shiro-chapter5
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: root
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql:///shiro
+name: xiaoxiao
+password: xiaoxiao
