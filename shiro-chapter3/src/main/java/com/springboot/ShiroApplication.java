@@ -1,6 +1,7 @@
 package com.springboot;
 
 import com.springboot.shiro.MyUserNamePasswordToken;
+import com.springboot.shiro.MyUserNamePasswordToken;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
@@ -88,7 +89,7 @@ public class ShiroApplication {
     public String loginout(){
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
-        return "true";
+        return "main";
     }
 
     @RequestMapping("/main")
