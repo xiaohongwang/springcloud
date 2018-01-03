@@ -1,11 +1,9 @@
 package com.springboot;
 
-import com.springboot.model.Users;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
-import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
@@ -64,7 +62,7 @@ public class ShiroApplication {
     public String loginout(){
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
-        return "true";
+        return "main";
     }
 
     @RequestMapping("/main")
