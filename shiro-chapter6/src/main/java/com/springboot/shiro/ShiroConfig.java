@@ -57,11 +57,6 @@ public class ShiroConfig {
     }
 
 
-
-
-
-
-
     @Bean(name = "securityManager")
     //配置核心安全管理器
     public DefaultWebSecurityManager getDefaultWebSecurityManager() {
@@ -69,10 +64,6 @@ public class ShiroConfig {
 
         ModularRealmAuthorizer authorizer =
                     new ModularRealmAuthorizer();
-
-        Collection<Realm> realms = new ArrayList<>();
-        realms.add(getShiroRealm());
-        authorizer.setRealms(realms);
 
         authorizer.setRolePermissionResolver(new MyRolePermissionResolver());
         authorizer.setPermissionResolver(new WildcardPermissionResolver());
