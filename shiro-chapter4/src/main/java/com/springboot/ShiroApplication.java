@@ -63,6 +63,15 @@ public class ShiroApplication {
               log.info("用户具有操作员管理的角色");
           }
 
+
+          try{
+              //获取用户的角色，并通过RolePermissionResolver解析角色对应的权限集合（默认没有实现，需自己提供）chapter6
+              subject.checkPermission("操作员管理:*");
+              log.info("成功了");
+          }catch (AuthorizationException e){
+              log.error(e.getMessage());
+          }
+
       } catch (AuthenticationException e) {
           //身份认证失败
           log.error("用户身份认证失败");
