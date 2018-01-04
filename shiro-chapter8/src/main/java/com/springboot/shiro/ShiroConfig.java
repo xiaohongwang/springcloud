@@ -105,7 +105,7 @@ public class ShiroConfig {
         shiroFilterFactoryBean
                 .setSecurityManager(getDefaultWebSecurityManager());
         //登录的url,如果不设置会自动寻找web工程根目录下的/login.jsp页面
-        shiroFilterFactoryBean.setLoginUrl("/login/{password}");
+        shiroFilterFactoryBean.setLoginUrl("/login/*");
         //登录成功跳转的链接
         shiroFilterFactoryBean.setSuccessUrl("/main");
         //未授权的页面
