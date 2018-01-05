@@ -44,5 +44,23 @@ create table sys_roles_permissions (
   constraint pk_sys_roles_permissions primary key(role_id, permission_id)
 ) charset=utf8 ENGINE=InnoDB;
 
+
+
+insert into `sys_permissions` (`id`, `permission`, `description`, `available`) values('1','addSysUser','添加系统操作员','0');
+insert into `sys_permissions` (`id`, `permission`, `description`, `available`) values('2','changePassword','修改用户密码','0');
+insert into `sys_permissions` (`id`, `permission`, `description`, `available`) values('3','unFreezeUser','激活用户','0');
+
+insert into `sys_roles` (`id`, `role`, `description`, `available`) values('1','sysUser','操作员管理','0');
+insert into `sys_roles` (`id`, `role`, `description`, `available`) values('2','permisson','权限管理','0');
+insert into `sys_roles` (`id`, `role`, `description`, `available`) values('3','role','角色管理','0');
+
+insert into `sys_roles_permissions` (`role_id`, `permission_id`) values('1','1');
+insert into `sys_roles_permissions` (`role_id`, `permission_id`) values('1','2');
+insert into `sys_roles_permissions` (`role_id`, `permission_id`) values('1','3');
+
+insert into `sys_users_roles` (`user_id`, `role_id`) values('1','1');
+insert into `sys_users_roles` (`user_id`, `role_id`) values('1','2');
+insert into `sys_users_roles` (`user_id`, `role_id`) values('1','3');
+
 INSERT INTO sys_users(username,PASSWORD,salt)
 VALUES('xiaohong','502db4e25057cfb196b7520dc58d32e2','971f141c2c36e0cc810df866fd078a1b');
