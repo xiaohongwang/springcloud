@@ -1,5 +1,6 @@
 package com.springboot.shiro;
 
+import com.springboot.filter.AnyRolesAuthorizationFilter;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authz.ModularRealmAuthorizer;
 import org.apache.shiro.authz.permission.WildcardPermissionResolver;
@@ -14,6 +15,8 @@ import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreato
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.servlet.Filter;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -108,12 +111,25 @@ public class ShiroConfig {
         //设置安全管理器  必须设置 securityManager
         shiroFilterFactoryBean
                 .setSecurityManager(getDefaultWebSecurityManager());
+
+        AnyRolesAuthorizationFilter anyRole =
+                new AnyRolesAuthorizationFilter();
+        Map<String, Filter> filterMap =
+                new HashMap<>();
+        filterMap.put("anyRole", anyRole);
+        shiroFilterFactoryBean.setFilters(filterMap);
+
         //登录的url,如果不设置会自动寻找web工程根目录下的/login.jsp页面
         shiroFilterFactoryBean.setLoginUrl("/login/**");
         //登录成功跳转的链接
         shiroFilterFactoryBean.setSuccessUrl("/main");
         //未授权的页面
         shiroFilterFactoryBean.setUnauthorizedUrl("/403");
+
+        //RolesAuthorizationFilter  同时拥有role 与 sysUser 角色时可访问/testRoleFilter
+        filterChainDefinitionMap.put("/testRoleFilter", "roles[role,sysUser]");
+
+        filterChainDefinitionMap.put("/testAnyRoleFilter", "anyRole[admin,sysUser]");
 
         //配置不会被拦截的链接 顺序判断 //可以匿名访问
         filterChainDefinitionMap.put("/static/**", "anon");
